@@ -28,7 +28,7 @@ class Conversor:
         directory_file_pattern = os.path.join(directory_path, "*.xls*")
         return glob.glob(directory_file_pattern)
 
-    def converter(self, server, database, username, password, issue_Key, is_Local_Database, enable_Leading_Zero_Padding, padding_Columns, padding_Zero_Count):
+    def converter(self, server, database, username, password, prefix, is_Local_Database, enable_Leading_Zero_Padding, padding_Columns, padding_Zero_Count):
         try:
             files = self.get_directory_files(self.get_default_directory())
             if len(files) == 0:
@@ -59,7 +59,7 @@ class Conversor:
                                 df[column] = df[column].apply(self.fill_zeros, quantidadeZeros=padding_Zero_Count)
                             else:
                                 print(f"A coluna {padding_Columns} não foi encontrada no DataFrame.")
-                    nomeTabela = issue_Key + "_" + sheet_name.replace(' ', '_') if issue_Key != "" else sheet_name.replace(' ', '_')
+                    nomeTabela = prefix + "_" + sheet_name.replace(' ', '_') if prefix != "" else sheet_name.replace(' ', '_')
                     df.to_sql(name=nomeTabela, con=engine, schema='tmp', if_exists='replace', index=False, dtype={col: NVARCHAR for col in df.columns})
 
             return "Conversão realizada com sucesso"

@@ -52,14 +52,14 @@ def main(page: ft.Page):
         database_value = database.value
         user_value = user.value
         pswd_value = pswd.value
-        tsk_key_value = tsk_key.value
+        prefix_value = prefix.value
         add_zeros_on_left_value = add_zeros_on_left_checkbox.value
         coluna_value = coluna.value
         qtd_zeros_value = qtd_zeros.value
         use_local_database_value = use_local_database_checkbox.value
 
         try:
-            resultado = conversor.converter(server=server_value, database=database_value, username=user_value, password=pswd_value, issue_Key=tsk_key_value, enable_Leading_Zero_Padding=add_zeros_on_left_value, padding_Columns=coluna_value, padding_Zero_Count=qtd_zeros_value, is_Local_Database=use_local_database_value)
+            resultado = conversor.converter(server=server_value, database=database_value, username=user_value, password=pswd_value, prefix=prefix_value, enable_Leading_Zero_Padding=add_zeros_on_left_value, padding_Columns=coluna_value, padding_Zero_Count=qtd_zeros_value, is_Local_Database=use_local_database_value)
             dialog = ft.AlertDialog(
                 title=ft.Text("Sucesso"),
                 content=ft.Text(resultado),
@@ -123,7 +123,7 @@ def main(page: ft.Page):
     user = ft.TextField(label="Username", hint_text="Nome do usuário banco de dados", width=500, height=50)
     user.value = username
     pswd = ft.TextField(label="Password", hint_text="Senha do usuário banco de dados", password=True, width=500, height=50)
-    tsk_key = ft.TextField(label="Task Key", hint_text="Código da tarefa", width=500, height=50)
+    prefix = ft.TextField(label="Prefix", hint_text="Prefixo do nome da tabela", width=500, height=50)
     add_zeros_on_left_checkbox = ft.Checkbox(label="Adicionar zeros a esquerda?", value=False, width=500, height=50, tooltip="Deixe desmarcado para não adicionar zeros a esquerda")
     coluna = ft.TextField(label="Column", hint_text="Digite as Colunas", width=500, height=50)
     qtd_zeros = ft.TextField(label="Zero Quantity", hint_text="Digite a quantidade de zeros", width=500, height=50,keyboard_type=ft.KeyboardType.NUMBER,on_change=on_change)
@@ -150,7 +150,7 @@ def main(page: ft.Page):
             ft.Container(database, alignment=ft.alignment.center_left, padding = padding_textfields),
             ft.Container(user, alignment=ft.alignment.center_left, padding = padding_textfields),
             ft.Container(pswd, alignment=ft.alignment.center_left, padding = padding_textfields),
-            ft.Container(tsk_key, alignment=ft.alignment.center_left, padding = padding_textfields),
+            ft.Container(prefix, alignment=ft.alignment.center_left, padding = padding_textfields),
             ft.Container(divider,padding = padding_symmetric),
             ft.Container(add_zeros_on_left_checkbox, alignment=ft.alignment.center_left, padding = padding_textfields),
             ft.Container(coluna, alignment=ft.alignment.center_left, padding = padding_textfields),
