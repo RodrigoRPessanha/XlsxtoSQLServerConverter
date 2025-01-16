@@ -1,6 +1,7 @@
 from sqlalchemy import NVARCHAR, create_engine
 import pandas as pd
 import os, glob, pickle
+from urllib.parse import quote_plus
 
 class Conversor:
     def __init__(self):
@@ -42,12 +43,11 @@ class Conversor:
                     return "Preencha os campos Servidor e Banco!"
             else:
                 if server != "" and database != "" and username != "" and password != "":
-                    connection_string = f"mssql+pyodbc://{username}:{password}@{server}/{database}?driver=ODBC+Driver+17+for+SQL+Server"
+                    connection_string = f"mssql+pyodbc://{quote_plus(username)}:{quote_plus(password)}@{server}/{database}?driver=ODBC+Driver+17+for+SQL+Server"
                 else:
                     return "Preencha todos os campos!"
-            
             self.save_login_server_information(username)
-            conn = create_engine(connection_string)
+            engine = create_engine(connection_string)
 
             for arquivo in files:
                 xls = pd.ExcelFile(arquivo)
@@ -59,8 +59,8 @@ class Conversor:
                                 df[column] = df[column].apply(self.fill_zeros, quantidadeZeros=padding_Zero_Count)
                             else:
                                 print(f"A coluna {padding_Columns} não foi encontrada no DataFrame.")
-                    nomeTabela = issue_Key + "_" + sheet_name.replace(' ', '_')
-                    df.to_sql(nomeTabela, conn, schema='tmp', if_exists='replace', index=False, dtype={col: NVARCHAR for col in df.columns})
+                    nomeTabela = issue_Key + "_" + sheet_name.replace(' ', '_') if issue_Key != "" else sheet_name.replace(' ', '_')
+                    df.to_sql(name=nomeTabela, con=engine, schema='tmp', if_exists='replace', index=False, dtype={col: NVARCHAR for col in df.columns})
 
             return "Conversão realizada com sucesso"
         except Exception as e:
@@ -77,15 +77,15 @@ class Conversor:
                     f"  - Exceção encontrada: {str(e)}")
 
     def save_login_server_information(self, username=""):
-        if not os.path.exists(".login"):
-            os.mkdir('.login')
-        with open(".login/login_data.pkl", "wb") as f:
+        if not os.path.exists("./login"):
+            os.mkdir('./login')
+        with open("./login/login_data.pkl", "wb") as f:
             login_data = {"server": self.serverList, "username": username}
             pickle.dump(login_data, f)
 
     def load_login_server_information(self):
         try:
-            with open(".login/login_data.pkl", "rb") as f:
+            with open("./login/login_data.pkl", "rb") as f:
                 login_data = pickle.load(f)
                 self.serverList = login_data["server"]
                 return login_data["server"], login_data["username"]
